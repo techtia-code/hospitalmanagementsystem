@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedCore Hospital System</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+  <div class="login-bg">
+    <div class="login-orb orb1"></div>
+    <div class="login-orb orb2"></div>
+    <div class="login-orb orb3"></div>
+  </div>
+  <div class="login-container">
+    <div class="login-brand">
+      <div class="brand-icon">⚕</div>
+      <h1>MedCore</h1>
+      <p>Hospital Management System</p>
+    </div>
+    <div class="login-card">
+      <h2>Doctor Login</h2>
+      <p class="login-sub">Access your patient dashboard</p>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="doctor@hospital.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" />
+      </div>
+      <div id="loginError" class="login-error hidden">Invalid email or password.</div>
+      <button class="btn-primary full-width" onclick="handleLogin()">Sign In</button>
+      <div class="login-hint">
+        <span>Demo accounts use password: <strong>p1234</strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appPage" class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon sm">⚕</div>
+      <span>MedCore</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" onclick="showSection('dashboard', this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('patients', this)">
+        <span class="nav-icon">🧑‍⚕️</span> Patients
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('medications', this)">
+        <span class="nav-icon">💊</span> Medications
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('doctors', this)">
+        <span class="nav-icon">👨‍⚕️</span> Doctors
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('schedule', this)">
+        <span class="nav-icon">📅</span> Schedule
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="sidebarAvatar">W</div>
+        <div>
+          <div class="user-name" id="sidebarName">Dr. Williams</div>
+          <div class="user-role">Attending Physician</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2 class="page-title" id="pageTitle">Dashboard</h2>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="topbarDate"></div>
+        <div class="topbar-user">
+          <div class="avatar sm" id="topbarAvatar">W</div>
+          <span id="topbarName">Dr. Williams</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <section id="section-dashboard" class="content-section active">
+      <div class="welcome-banner">
+        <div>
+          <h3 id="welcomeMsg">Welcome back, Dr. Williams 👋</h3>
+          <p>Here's what's happening at MedCore today.</p>
+        </div>
+        <div class="welcome-badge">
+          <span id="welcomeShift">Morning Shift</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon">🧑‍⚕️</div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">My Patients</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">💊</div>
+          <div class="stat-value">34</div>
+          <div class="stat-label">Active Medications</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-value">3</div>
+          <div class="stat-label">Critical Patients</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">🔔</div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">Meds Expiring Soon</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-header">
+            <h4>My Patients</h4>
+            <a href="#" onclick="showSection('patients', null)" class="card-link">View All →</a>
+          </div>
+          <div id="dashPatientList" class="patient-mini-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h4>Upcoming Medication Deliveries</h4>
+          </div>
+          <div id="dashMedList" class="med-mini-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PATIENTS SECTION -->
+    <section id="section-patients" class="content-section">
+      <div class="section-toolbar">
+        <input type="text" class="search-input" placeholder="🔍  Search patients..." oninput="filterPatients(this.value)" />
+        <select class="filter-select" onchange="filterPatientsByStatus(this.value)">
+          <option value="">All Status</option>
+          <option value="Stable">Stable</option>
+          <option value="Critical">Critical</option>
+          <option value="Recovering">Recovering</option>
+          <option value="Discharged">Discharged</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <table class="data-table" id="patientsTable">
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Ward</th>
+              <th>Diagnosis</th>
+              <th>Assigned Doctor</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="patientsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MEDICATIONS SECTION -->
+    <section id="section-medications" class="content-section">
+      <div class="section-toolbar">
+        <input type="text" class="search-input" placeholder="🔍  Search medications..." oninput="filterMeds(this.value)" />
+        <select class="filter-select" onchange="filterMedsByStatus(this.value)">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Expiring Soon">Expiring Soon</option>
+          <option value="Expired">Expired</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <table class="data-table" id="medsTable">
+          <thead>
+            <tr>
+              <th>Med ID</th>
+              <th>Medication Name</th>
+              <th>Patient</th>
+              <th>Dosage</th>
+              <th>Frequency</th>
+              <th>Delivery Date</th>
+              <th>Expiry Date</th>
+              <th>Prescribed By</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="medsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DOCTORS SECTION -->
+    <section id="section-doctors" class="content-section">
+      <div class="doctors-grid" id="doctorsGrid"></div>
+    </section>
+
+    <!-- SCHEDULE SECTION -->
+    <section id="section-schedule" class="content-section">
+      <div class="schedule-grid" id="scheduleGrid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- PATIENT MODAL -->
+<div id="patientModal" class="modal-overlay hidden" onclick="closeModal('patientModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('patientModal')">✕</button>
+    <div id="patientModalContent"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
